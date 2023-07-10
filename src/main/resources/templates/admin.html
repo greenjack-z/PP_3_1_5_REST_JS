@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+    <head th:insert="~{fragments/meta.html}">
+        <title>index page</title>
+    </head>
+
+    <body>
+    <!--header-->
+    <div th:replace="~{fragments/header.html}"></div>
+    <!--/header-->
+
+    <!--container-->
+    <h1>this is admin page</h1>
+    <div class="container">
+        <table>
+            <caption>Table of a registered Users</caption>
+            <tr>
+                <th>user id</th>
+                <th>user login</th>
+                <th>user name</th>
+                <th>user age</th>
+                <th>user roles</th>
+                <th>user enabled</th>
+            </tr>
+            <tr th:each="user : ${allUsers}" th:onClick="rowClicked([[${user.id}]], [[${user.username}]], [[${user.name}]], [[${user.age}]], [[${user.enabled}]], [[${user.roles}]])">
+                <td th:text="${user.id}">id_placeholder</td>
+                <td th:text="${user.username}">login_placeholder</td>
+                <td th:text="${user.name}">name_placeholder</td>
+                <td th:text="${user.age}">age_placeholder</td>
+                <td th:text="${user.roles}">age_placeholder</td>
+                <td th:text="${user.enabled}">age_placeholder</td>
+            </tr>
+        </table>
+        <form name="form" action="#" th:object="${user}" method="post">
+
+            <input id="id" name="id" type="hidden" value="0"/>
+            <input id="formMethod" type="hidden" name="_method" value="post">
+
+            <div class="grid-container">
+                <div>
+                    <input id="username" name="username" type="text" placeholder="login"/>
+                    <input id="password" name="password" type="password" placeholder="password"/>
+                    <input id="name" name="name" type="text" placeholder="user name"/>
+                    <input id="age" name="age" type="number" placeholder="user age"/>
+                    <label for="user">Is USER: </label>
+                    <input id="user" name="roles" type="checkbox" value="user" checked="true">
+                    <label for="admin">Is ADMIN: </label>
+                    <input id="admin" name="roles" type="checkbox" value="admin" checked="true">
+                    <label for="enabled">Is enabled: </label>
+                    <input id="enabled" name="enabled" type="checkbox" value="true" checked="true">
+                </div>
+                <div>
+                    <input type="submit" value="add user" th:formaction="@{/admin/add}" onclick="document.form.id.value=0"/>
+                    <input type="submit" value="update user" th:formaction="@{/admin/update}" onclick="document.form._method.value='patch'"/>
+                    <input class="delete" type="submit" value="delete user" th:formaction="@{/admin/delete}" onclick="document.form._method.value='delete'"/>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--/container-->
+
+    <!--footer-->
+    <div th:replace="~{fragments/footer.html}"></div>
+    <!--/footer-->
+    </body>
+
+</html>

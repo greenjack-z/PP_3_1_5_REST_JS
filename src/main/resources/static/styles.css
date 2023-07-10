@@ -1,0 +1,96 @@
+* {
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+}
+
+.container {
+    padding: auto;
+    margin: auto;
+    max-width: 80%;
+    display: block;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0px;
+}
+
+.footer {
+    margin: 50px 5px 5px 5px;
+}
+
+h2 {
+    font-size: 20px;
+    color: #df0c0c;
+}
+
+table {
+    font-size: 16px;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 10px 0;
+}
+
+caption {
+   font-size: 12px;
+   caption-side: top;
+   text-align: left;
+   padding: 20px 10px 5px;
+}
+
+th {
+    font-weight: normal;
+    text-align: left;
+    padding: 5px 10px 5px;
+    background-color: #04AA6D;
+    color: white;
+    border: 1px solid #ddd;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    transition: .3s linear;
+}
+
+input {
+    width: 99%;
+    padding: 5px 10px;
+    margin: 3px 0px 0px 0px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+}
+
+input[type=submit] {
+    background-color: #04AA6D;
+    color: white;
+    padding: 8px;
+    margin: 2px 0px 0px 0px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #04BB6D;
+}
+
+input[type=checkbox] {
+    width: 5%;
+}
+
+
+input[class=delete] {
+    background-color: red;
+}
+
+label {
+  font-size: 12px;
+  padding: 10px 0 0;
+}
+
