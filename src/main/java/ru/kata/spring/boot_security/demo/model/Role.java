@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import jakarta.persistence.Embeddable;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 
 @Embeddable

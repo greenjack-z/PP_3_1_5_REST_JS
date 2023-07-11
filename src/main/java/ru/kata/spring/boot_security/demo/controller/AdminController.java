@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 
+import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UsersService;
@@ -8,50 +10,38 @@ import ru.kata.spring.boot_security.demo.service.UsersService;
 import java.util.List;
 
 
-@org.springframework.stereotype.Controller
-public class Controller {
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
 
-    private static final String ADMIN_REDIRECT = "redirect:/admin";
+    private static final String ADMIN_REDIRECT = "redirect:/admin/users";
 
     UsersService usersService;
 
-    public Controller(UsersService usersService) {
+    public AdminController(UsersService usersService) {
         this.usersService = usersService;
     }
 
-    @GetMapping("/")
-    public String root() {
-        return "index";
-    }
 
-    @GetMapping("/index")
-    public String index() {
-        return "index";
-    }
 
-    @GetMapping("/user")
-    public String user() {
-        return "user";
-    }
-
-    @GetMapping("/admin")
+    @GetMapping("/users")
     public String admin() {
-        return "admin";
+        return "users";
     }
 
-    @PostMapping("/admin/add")
+    @PostMapping("/add")
     public String addUser(@ModelAttribute User user) {
         usersService.saveUser(user);
         return ADMIN_REDIRECT;
     }
 
-    @PatchMapping("/admin/update")
+    @PatchMapping("/update")
     public String updateUser(@ModelAttribute User user) {
         usersService.updateUser(user);
         return ADMIN_REDIRECT;
     }
 
-    @DeleteMapping("/admin/delete")
+    @DeleteMapping("/delete")
     public String deleteUser(@ModelAttribute User user) {
         usersService.deleteUser(user);
         return ADMIN_REDIRECT;
@@ -61,5 +51,4 @@ public class Controller {
     public List<User> allUsers() {
         return usersService.findAll();
     }
-
 }

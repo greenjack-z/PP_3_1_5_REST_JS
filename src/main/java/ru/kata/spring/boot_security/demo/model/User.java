@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,7 +28,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private int age;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     private Set<Role> roles;
 
