@@ -1,37 +1,47 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import jakarta.persistence.Embeddable;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
-@Embeddable
+import java.util.Set;
+
+@Entity
+@Table(name = "roles")
 public class Role implements GrantedAuthority {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(nullable = false, unique = true)
     private String authority;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users;
 
     public Role() {
         //constructor for Hibernate
     }
 
-    public Role(String authority) {
-        setAuthority(authority);
+    public Role(String roleName) {
+        this.setAuthority(roleName);
     }
-
     @Override
     public String getAuthority() {
         return authority;
     }
 
-    public void setAuthority(String authority) {
-        if (authority.toLowerCase().contains("admin")) {
-            this.authority = "ROLE_ADMIN";
-        } else {
-            this.authority = "ROLE_USER";
-        }
+    public Role setAuthority(String authority) {
+        this.authority = authority;
+        return this;
     }
 
-    @Override
-    public String toString() {
-        return authority;
+    public Set<User> getUsers() {
+        return users;
     }
+
+    public void addUser(User user) {
+        users.add(user);
+    }
+
 }

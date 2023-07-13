@@ -10,12 +10,6 @@
     display: block;
 }
 
-.grid-container {
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 0px;
-}
-
 .footer {
     margin: 50px 5px 5px 5px;
 }
@@ -59,11 +53,9 @@ td {
 }
 
 input {
-    width: 99%;
+    border: 1px solid #ddd;
     padding: 5px 10px;
-    margin: 3px 0px 0px 0px;
-    border: 1px solid #ccc;
-    border-radius: 2px;
+    width: 100%;
 }
 
 input[type=submit] {
@@ -84,7 +76,6 @@ input[type=checkbox] {
     width: 5%;
 }
 
-
 input[class=delete] {
     background-color: red;
 }
@@ -92,5 +83,10 @@ input[class=delete] {
 label {
   font-size: 12px;
   padding: 10px 0 0;
+}
+
+dialog {
+    width: 50%;
+    border: 2px;
 }
 

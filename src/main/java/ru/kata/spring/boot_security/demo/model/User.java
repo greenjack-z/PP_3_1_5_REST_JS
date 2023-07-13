@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.model;
 
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,8 +29,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private int age;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
+    @ManyToMany(cascade = CascadeType.ALL) //todo remove to delete
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     private boolean enabled;
@@ -103,7 +104,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return roles;
     }
 
     @Override
