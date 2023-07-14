@@ -51,15 +51,22 @@
                     <dialog id="dialog_update" th:id="update + ${user.id}">
                         <h1>Update user:</h1>
                         <p>You're about to update user:</p>
-                        <form th:action="${user.id}" th:method="patch" th:object="${user}">
-                            <input type="number" th:value="${user.id}" value="01">
-                            <input type="text" th:value="${user.username}" value="username">
-                            <input type="text" th:value="${user.name}" value="name">
-                            <input type="number" th:value="${user.age}" value="10">
-                            <input type="" th:value="${user.roles}" value="roles">
-                            <input type="text" th:value="${user.enabled}" value="enabled">
+                        <form th:action="${user.id}" th:method="patch">
+                            <input type="number" th:id="${user.id} + id" name="id" th:value="${user.id}" value="01">
+                            <input type="hidden" th:id="${user.id} + password" name="password" th:value="${user.password}">
+                            <input type="text" th:id="${user.id} + username" name="username" th:value="${user.username}" value="username">
+                            <input type="text" th:id="${user.id} + name" name="name" th:value="${user.name}" value="name">
+                            <input type="number" th:id="${user.id} + age" name="age" th:value="${user.age}" value="10">
+                            <p>Roles:</p>
+                            <input type="checkbox" th:id="${user.id} + user" name="roles" value="ROLE_USER" th:checked="${user.roles.^[authority=='ROLE_USER']}">
+                            <label th:for="roles">is USER</label><br>
+                            <input type="checkbox" th:id="${user.id} + admin" name="roles" value="ROLE_ADMIN" th:checked="${user.roles.^[authority=='ROLE_ADMIN']}">
+                            <label th:for="roles">is ADMIN</label><br><hr>
+                            <p>Options:</p>
+                            <input type="checkbox" th:id="${user.id} + enabled" name="enabled" th:checked="${user.enabled}">
+                            <label th:for="enabled">is enabled</label><hr>
                             <input type="submit" value="cancel" formmethod="dialog">
-                            <input type="submit" value="update">
+                            <input type="submit" value="update" class="delete">
                         </form>
                     </dialog>
                     <!-- / Модальное окно -->
@@ -70,13 +77,10 @@
                     <dialog id="dialog_delete" th:id="delete + ${user.id}">
                         <h1>Delete user?</h1>
                         <p>You're about to delete user:</p>
-                        <form th:action="${user.id}" th:method="delete" th:object="${user}">
+                        <form th:action="${user.id}" th:method="delete">
                             <input type="number" readonly th:value="${user.id}" value="01">
                             <input type="text" readonly th:value="${user.username}" value="username">
                             <input type="text" readonly th:value="${user.name}" value="name">
-                            <input type="number" readonly th:value="${user.age}" value="10">
-                            <input type="text" readonly th:value="${user.roles}" value="roles">
-                            <input type="text" readonly th:value="${user.enabled}" value="enabled">
                             <input type="submit" value="cancel" formmethod="dialog">
                             <input type="submit" class="delete" value="delete">
                         </form>
@@ -95,18 +99,16 @@
                 <input type="password" th:field="*{password}" placeholder="password">
                 <input type="text" th:field="*{name}" placeholder="user name">
                 <input type="number" th:field="*{age}" placeholder="user age">
-
-                <label th:for="roles">is USER</label>
+                <p>Roles:</p>
                 <input type="checkbox" th:field="*{roles}" value="ROLE_USER">
-
-                <label th:for="roles">is ADMIN</label>
+                <label th:for="roles">is USER</label><br>
                 <input type="checkbox" th:field="*{roles}" value="ROLE_ADMIN">
-
-                <label th:for="enabled">is enabled</label>
+                <label th:for="roles">is ADMIN</label><br><hr>
+                <p>Options:</p>
                 <input type="checkbox" th:field="*{enabled}" checked>
-
+                <label th:for="enabled">is enabled</label><hr>
                 <input type="submit" value="cancel" formmethod="dialog">
-                <input type="submit" value="add">
+                <input type="submit" value="add" class="delete">
             </form>
         </dialog>
         <!-- / Модальное окно -->

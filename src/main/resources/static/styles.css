@@ -72,21 +72,21 @@ input[type=submit]:hover {
     background-color: #04BB6D;
 }
 
-input[type=checkbox] {
-    width: 5%;
-}
-
 input[class=delete] {
     background-color: red;
 }
 
+input[type=checkbox] {
+    width: 20px;
+}
+
 label {
   font-size: 12px;
-  padding: 10px 0 0;
+  padding: 10px;
 }
 
 dialog {
-    width: 50%;
+    width: 30%;
     border: 2px;
 }
 
