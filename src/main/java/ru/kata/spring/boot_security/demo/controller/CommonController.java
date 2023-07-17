@@ -8,7 +8,7 @@ public class CommonController {
 
     @GetMapping(path = {"/", "/index"})
     public String home() {
-        return "index";
+        return "bsindex";
     }
 
     @GetMapping("login")

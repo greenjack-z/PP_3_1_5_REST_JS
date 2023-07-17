@@ -29,7 +29,11 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(login -> login.successHandler(successUserHandler).permitAll())
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .successHandler(successUserHandler)
+                        .permitAll())
                 .logout(LogoutConfigurer::permitAll);
 
         return http.build();
