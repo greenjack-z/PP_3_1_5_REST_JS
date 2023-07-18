@@ -6,12 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class CommonController {
 
-    @GetMapping(path = {"/", "/index"})
-    public String home() {
-        return "bsindex";
-    }
-
-    @GetMapping("login")
+    @GetMapping("/login")
     public String login() {
         return "login";
     }

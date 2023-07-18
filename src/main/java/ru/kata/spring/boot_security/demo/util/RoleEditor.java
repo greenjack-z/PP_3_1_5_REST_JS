@@ -15,27 +15,12 @@ public class RoleEditor extends PropertyEditorSupport {
     }
 
     @Override
-    public String getAsText() {
-        System.err.println("get as text called!");
-        Role role = (Role) getValue();
-        if (role == null) {
-            return "";
-        }
-        return role.getAuthority();
-    }
-
-    @Override
     public void setAsText(String text) {
-        System.err.println("set as text called!");
         if (text.isEmpty()) {
             setValue(null);
             return;
         }
-        System.err.println("Value is not empty!");
-        System.err.println("value is: " + text);
-        Role role = rolesService.findRoleByName(text);
-        System.err.println("role fetched!");
-        System.err.println(role.getAuthority());
+        Role role = rolesService.findRoleByName("ROLE_" + text);
         setValue(role);
     }
 }

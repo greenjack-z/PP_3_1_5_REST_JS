@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.dao.RolesRepository;
-import ru.kata.spring.boot_security.demo.dao.UsersRepository;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RolesRepository;
+import ru.kata.spring.boot_security.demo.repository.UsersRepository;
 
 import java.util.List;
 
@@ -41,6 +41,9 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public void updateUser(User user) {
+        if (!user.getPassword().startsWith("{bcrypt}")) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         usersRepository.save(user);
     }
 
@@ -49,4 +52,5 @@ public class UsersServiceImpl implements UsersService {
     public void deleteUser(User user) {
         usersRepository.delete(user);
     }
+
 }

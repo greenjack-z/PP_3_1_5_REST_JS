@@ -31,7 +31,6 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .usernameParameter("email")
                         .successHandler(successUserHandler)
                         .permitAll())
                 .logout(LogoutConfigurer::permitAll);

@@ -33,6 +33,11 @@ public class AdminController {
         return "users";
     }
 
+    @GetMapping("/new")
+    public String newUser() {
+        return "new";
+    }
+
     @PostMapping("/add")
     public String addUser(@ModelAttribute User user) {
         usersService.saveUser(user);
@@ -56,9 +61,9 @@ public class AdminController {
         return usersService.findAll();
     }
 
-    @ModelAttribute("newUser")
-    public User newUser() {
-        return new User();
+    @ModelAttribute("roles")
+    public List<Role> roles() {
+        return rolesService.findAll();
     }
 
     @InitBinder

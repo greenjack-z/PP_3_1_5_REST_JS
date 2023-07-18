@@ -47,7 +47,7 @@ public class User implements UserDetails {
     private LocalDate createdDate;
 
     @Column(name = "password_date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private LocalDate passwordDate;
 
     public User() {
@@ -64,6 +64,10 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
+        return getEmail();
+    }
+
+    public String getEmail() {
         return email;
     }
 
@@ -151,4 +155,7 @@ public class User implements UserDetails {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

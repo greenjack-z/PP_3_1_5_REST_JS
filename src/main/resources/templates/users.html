@@ -3,121 +3,134 @@
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:ital@1&display=swap">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <title>Admin panel</title>
+</head>
 
-        <link rel="stylesheet" href="../static/styles.css" th:href="@{/styles.css}" type="text/css">
+<body>
 
-        <title>admin page</title>
-    </head>
-
-    <body>
-    <!--header-->
-    <div th:replace="~{fragments/header.html}"></div>
-    <!--/header-->
-
-    <!--container-->
-    <h1>this is admin page</h1>
-    <div class="container">
-        <table>
-            <caption>Table of a registered Users</caption>
-            <tr>
-                <th>user id</th>
-                <th>login</th>
-                <th>name</th>
-                <th>age</th>
-                <th>roles</th>
-                <th>is enabled</th>
-                <th>edit</th>
-                <th>delete</th>
-            </tr>
-            <tr th:each="user : ${allUsers}">
-                <td th:text="${user.id}">_id_</td>
-                <td th:text="${user.username}">_login_</td>
-                <td th:text="${user.name}">_name_</td>
-                <td th:text="${user.age}">_age_</td>
-                <td>
-                    <div th:each="role : ${user.roles}">
-                        <div th:text="${role.authority}">_role_</div>
-                    </div>
-                </td>
-                <td th:text="${user.enabled}">_enabled_</td>
-                <td>
-                    <input type="submit" value="update" onclick="dialog_update.showModal()" th:onclick="'update' + ${user.id} + '.showModal()'">
-                    <!-- Модальное окно -->
-                    <dialog id="dialog_update" th:id="update + ${user.id}">
-                        <h1>Update user:</h1>
-                        <p>You're about to update user:</p>
-                        <form th:action="${user.id}" th:method="patch">
-                            <input type="number" th:id="${user.id} + id" name="id" th:value="${user.id}" value="01">
-                            <input type="hidden" th:id="${user.id} + password" name="password" th:value="${user.password}">
-                            <input type="text" th:id="${user.id} + username" name="username" th:value="${user.username}" value="username">
-                            <input type="text" th:id="${user.id} + name" name="name" th:value="${user.name}" value="name">
-                            <input type="number" th:id="${user.id} + age" name="age" th:value="${user.age}" value="10">
-                            <p>Roles:</p>
-                            <input type="checkbox" th:id="${user.id} + user" name="roles" value="ROLE_USER" th:checked="${user.roles.^[authority=='ROLE_USER']}">
-                            <label th:for="roles">is USER</label><br>
-                            <input type="checkbox" th:id="${user.id} + admin" name="roles" value="ROLE_ADMIN" th:checked="${user.roles.^[authority=='ROLE_ADMIN']}">
-                            <label th:for="roles">is ADMIN</label><br><hr>
-                            <p>Options:</p>
-                            <input type="checkbox" th:id="${user.id} + enabled" name="enabled" th:checked="${user.enabled}">
-                            <label th:for="enabled">is enabled</label><hr>
-                            <input type="submit" value="cancel" formmethod="dialog">
-                            <input type="submit" value="update" class="delete">
-                        </form>
-                    </dialog>
-                    <!-- / Модальное окно -->
-                </td>
-                <td>
-                    <input type="submit" class="delete" value="delete" onclick="dialog_delete.showModal()" th:onclick="'delete' + ${user.id} + '.showModal()'">
-                    <!-- Модальное окно -->
-                    <dialog id="dialog_delete" th:id="delete + ${user.id}">
-                        <h1>Delete user?</h1>
-                        <p>You're about to delete user:</p>
-                        <form th:action="${user.id}" th:method="delete">
-                            <input type="number" readonly th:value="${user.id}" value="01">
-                            <input type="text" readonly th:value="${user.username}" value="username">
-                            <input type="text" readonly th:value="${user.name}" value="name">
-                            <input type="submit" value="cancel" formmethod="dialog">
-                            <input type="submit" class="delete" value="delete">
-                        </form>
-                    </dialog>
-                    <!-- / Модальное окно -->
-                </td>
-            </tr>
-        </table>
-        <input type="submit" value="add user" onclick="dialog_new.showModal()">
-        <!-- Модальное окно -->
-        <dialog id="dialog_new">
-            <h1>New user:</h1>
-            <p>You're about to add new user:</p>
-            <form action="/admin/add" th:object="${newUser}" method="post">
-                <input type="text" th:field="*{username}" placeholder="login">
-                <input type="password" th:field="*{password}" placeholder="password">
-                <input type="text" th:field="*{name}" placeholder="user name">
-                <input type="number" th:field="*{age}" placeholder="user age">
-                <p>Roles:</p>
-                <input type="checkbox" th:field="*{roles}" value="ROLE_USER">
-                <label th:for="roles">is USER</label><br>
-                <input type="checkbox" th:field="*{roles}" value="ROLE_ADMIN">
-                <label th:for="roles">is ADMIN</label><br><hr>
-                <p>Options:</p>
-                <input type="checkbox" th:field="*{enabled}" checked>
-                <label th:for="enabled">is enabled</label><hr>
-                <input type="submit" value="cancel" formmethod="dialog">
-                <input type="submit" value="add" class="delete">
-            </form>
-        </dialog>
-        <!-- / Модальное окно -->
+<header class="p-2 text-bg-secondary">
+    <div class="container-fluid text-end">
+        <button type="button" class="btn btn-outline-light">Logout</button>
     </div>
-    <!--/container-->
+</header>
 
-    <!--footer-->
-    <div th:replace="~{fragments/footer.html}"></div>
-    <!--/footer-->
-    </body>
+<!--container-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2 p-2">
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" data-bs-toggle="button">Admin</button>
+                <button type="button" class="btn btn-outline">User</button>
+            </div>
+        </div>
+        <div class="col bg-light">
+            <h1 class="m-2">Admin panel</h1>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Users table</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/new">New User</a>
+                </li>
+            </ul>
+            <div class="container">
+                <h2>All users</h2>
+                <table class="table table-striped">
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                    <tr th:each="user : ${allUsers}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.firstname}"></td>
+                        <td th:text="${user.lastname}"></td>
+                        <td th:text="${user.age}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td>
+                            <span th:each="role : ${user.roles}">
+                                <span th:text="${role}"> </span>
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" th:data-bs-target="'#editModal' + ${user.id}">
+                                Edit
+                            </button>
+                            <!-- Модальное окно -->
+                            <div class="modal fade" th:id="editModal + ${user.id}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-md">
+                                    <div class="modal-content text-center">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit user</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form th:method="patch" th:action="${user.id}">
+                                                <label class="form-label"><h5>ID</h5></label>
+                                                <input type="number" class="form-control" th:name="id" th:value="${user.id}">
+                                                <label class="form-label"><h5>First Name</h5></label>
+                                                <input type="text" class="form-control" th:name="firstname" th:value="${user.firstname}">
+
+                                                <label class="form-label"><h5>Last Name</h5></label>
+                                                <input type="text" class="form-control" th:name="lastname" th:value="${user.lastname}">
+                                                <label class="form-label"><h5>Age</h5></label>
+                                                <input type="number" class="form-control" th:name="age" th:value="${user.age}">
+                                                <label class="form-label"><h5>E-mail</h5></label>
+                                                <input type="email" class="form-control" th:name="email" th:value="${user.email}">
+                                                <label class="form-label"><h5>Password</h5></label>
+                                                <input type="password" class="form-control" th:name="password" th:value="${user.password}">
+                                                <label class="form-label"><h5>Roles</h5></label>
+                                                <select class="form-select" multiple size="3" th:name="roles">
+                                                    <option th:each="role : ${roles}" th:selected="${#sets.contains(user.roles, role)}">
+                                                        <span th:text="${role}"></span>
+                                                    </option>
+                                                </select>
+                                                <div class="container text-end">
+                                                    <button type="button" class="btn btn-secondary m-2" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">Delete
+                            </button>
+                            <!-- Модальное окно -->
+                            <!--                    <dialog id="dialog_delete" th:id="delete + ${user.id}">-->
+                            <!--                        <h1>Delete user?</h1>-->
+                            <!--                        <p>You're about to delete user:</p>-->
+                            <!--                        <form th:action="${user.id}" th:method="delete">-->
+                            <!--                            <input type="number" readonly th:value="${user.id}" value="01">-->
+                            <!--                            <input type="text" readonly th:value="${user.username}" value="username">-->
+                            <!--                            <input type="text" readonly th:value="${user.name}" value="name">-->
+                            <!--                            <input type="submit" value="cancel" formmethod="dialog">-->
+                            <!--                            <input type="submit" class="delete" value="delete">-->
+                            <!--                        </form>-->
+                            <!--                    </dialog>-->
+                            <!-- / Модальное окно -->
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/container-->
+
+</body>
 
 </html>

@@ -44,4 +44,9 @@ public class Role implements GrantedAuthority {
         users.add(user);
     }
 
+    @Override
+    public String toString() {
+        return authority.replaceFirst("ROLE_", "");
+    }
+
 }
