@@ -33,7 +33,8 @@ public class WebSecurityConfig {
                         .loginPage("/login")
                         .successHandler(successUserHandler)
                         .permitAll())
-                .logout(LogoutConfigurer::permitAll);
+                .logout(LogoutConfigurer::permitAll)
+                .rememberMe(remember -> remember.key("secret_key"));
 
         return http.build();
     }

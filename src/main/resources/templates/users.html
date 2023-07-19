@@ -6,26 +6,32 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
     <title>Admin panel</title>
 </head>
 
 <body>
-
-<header class="p-2 text-bg-secondary">
-    <div class="container-fluid text-end">
-        <button type="button" class="btn btn-outline-light">Logout</button>
-    </div>
-</header>
-
-<!--container-->
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid vh-100">
+    <header class="row p-3 text-bg-dark">
+        <div class="col">
+            <span class="fw-bold" th:text="${#authentication.name}"></span> with roles:
+            <span th:each="role : ${#authentication.principal.roles}">
+                <span th:text="${role}"> </span>
+            </span>
+        </div>
+        <div class="col-3 text-end">
+            <a class="fw-bold link-secondary link-underline-opacity-0" href="/logout">Logout</a>
+        </div>
+    </header>
+    <div class="row h-100">
         <div class="col-2 p-2">
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-primary" data-bs-toggle="button">Admin</button>
-                <button type="button" class="btn btn-outline">User</button>
+                <a class="btn btn-primary" href="#" role="button">Admin</a>
+                <a class="btn btn-outline" href="/user" role="button">User</a>
             </div>
         </div>
         <div class="col bg-light">
@@ -63,64 +69,124 @@
                             </span>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-info" data-bs-toggle="modal" th:data-bs-target="'#editModal' + ${user.id}">
-                                Edit
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    th:data-bs-target="'#editModal' + ${user.id}">Edit
                             </button>
                             <!-- Модальное окно -->
                             <div class="modal fade" th:id="editModal + ${user.id}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered modal-md">
-                                    <div class="modal-content text-center">
+                                    <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Edit user</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-                                        <div class="modal-body">
-                                            <form th:method="patch" th:action="${user.id}">
-                                                <label class="form-label"><h5>ID</h5></label>
-                                                <input type="number" class="form-control" th:name="id" th:value="${user.id}">
-                                                <label class="form-label"><h5>First Name</h5></label>
-                                                <input type="text" class="form-control" th:name="firstname" th:value="${user.firstname}">
+                                        <div class="modal-body mx-5 px-5 text-center">
+                                            <form th:id="editForm + ${user.id}" th:method="patch"
+                                                  th:action="${user.id}">
+                                                <label class="form-label mb-0">ID</label>
+                                                <input type="number" disabled class="form-control mb-2" th:name="id"
+                                                       th:value="${user.id}">
+                                                <label class="form-label mb-0">First Name</label>
+                                                <input type="text" class="form-control mb-2" th:name="firstname"
+                                                       th:value="${user.firstname}">
 
-                                                <label class="form-label"><h5>Last Name</h5></label>
-                                                <input type="text" class="form-control" th:name="lastname" th:value="${user.lastname}">
-                                                <label class="form-label"><h5>Age</h5></label>
-                                                <input type="number" class="form-control" th:name="age" th:value="${user.age}">
-                                                <label class="form-label"><h5>E-mail</h5></label>
-                                                <input type="email" class="form-control" th:name="email" th:value="${user.email}">
-                                                <label class="form-label"><h5>Password</h5></label>
-                                                <input type="password" class="form-control" th:name="password" th:value="${user.password}">
-                                                <label class="form-label"><h5>Roles</h5></label>
-                                                <select class="form-select" multiple size="3" th:name="roles">
-                                                    <option th:each="role : ${roles}" th:selected="${#sets.contains(user.roles, role)}">
+                                                <label class="form-label mb-0">Last Name</label>
+                                                <input type="text" class="form-control mb-2" th:name="lastname"
+                                                       th:value="${user.lastname}">
+                                                <label class="form-label mb-0">Age</label>
+                                                <input type="number" class="form-control mb-2" th:name="age"
+                                                       th:value="${user.age}">
+                                                <label class="form-label mb-0">E-mail</label>
+                                                <input type="email" class="form-control mb-2" th:name="email"
+                                                       th:value="${user.email}">
+                                                <label class="form-label mb-0">Password</label>
+                                                <input type="password" class="form-control mb-2" th:name="password"
+                                                       th:value="${user.password}">
+                                                <label class="form-label mb-0">Roles</label>
+                                                <select class="form-select mb-2" multiple th:size="${roles.size}"
+                                                        th:name="roles">
+                                                    <option th:each="role : ${roles}"
+                                                            th:selected="${#sets.contains(user.roles, role)}">
                                                         <span th:text="${role}"></span>
                                                     </option>
                                                 </select>
-                                                <div class="container text-end">
-                                                    <button type="button" class="btn btn-secondary m-2" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                                </div>
+                                                <input type="checkbox" class="form-check-input" th:name="enabled"
+                                                       th:checked="${user.isEnabled}">
+                                                <label class="form-check-label mb-0">Enabled</label>
+                                                <input type="checkbox" class="form-check-input" th:name="locked"
+                                                       th:checked="${!user.isAccountNonLocked}">
+                                                <label class="form-check-label mb-0">Locked</label>
                                             </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="submit" th:form="editForm + ${user.id}"
+                                                        class="btn btn-primary">Save changes
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- / Модальное окно -->
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal">Delete
+                                    th:data-bs-target="'#deleteModal' + ${user.id}">Delete
                             </button>
                             <!-- Модальное окно -->
-                            <!--                    <dialog id="dialog_delete" th:id="delete + ${user.id}">-->
-                            <!--                        <h1>Delete user?</h1>-->
-                            <!--                        <p>You're about to delete user:</p>-->
-                            <!--                        <form th:action="${user.id}" th:method="delete">-->
-                            <!--                            <input type="number" readonly th:value="${user.id}" value="01">-->
-                            <!--                            <input type="text" readonly th:value="${user.username}" value="username">-->
-                            <!--                            <input type="text" readonly th:value="${user.name}" value="name">-->
-                            <!--                            <input type="submit" value="cancel" formmethod="dialog">-->
-                            <!--                            <input type="submit" class="delete" value="delete">-->
-                            <!--                        </form>-->
-                            <!--                    </dialog>-->
+                            <div class="modal fade" th:id="deleteModal + ${user.id}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-md">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Delete user</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body mx-5 px-5 text-center">
+                                            <form th:id="deleteForm + ${user.id}" th:method="delete"
+                                                  th:action="${user.id}">
+                                                <label class="form-label mb-0">ID</label>
+                                                <input type="number" disabled class="form-control mb-2"
+                                                       th:value="${user.id}">
+                                                <label class="form-label mb-0">First Name</label>
+                                                <input type="text" disabled class="form-control mb-2"
+                                                       th:value="${user.firstname}">
+                                                <label class="form-label mb-0">Last Name</label>
+                                                <input type="text" disabled class="form-control mb-2"
+                                                       th:value="${user.lastname}">
+                                                <label class="form-label mb-0">Age</label>
+                                                <input type="number" disabled class="form-control mb-2"
+                                                       th:value="${user.age}">
+                                                <label class="form-label mb-0">E-mail</label>
+                                                <input type="email" disabled class="form-control mb-2"
+                                                       th:value="${user.email}">
+                                                <label class="form-label mb-0">Roles</label>
+                                                <select disabled class="form-select mb-2" multiple
+                                                        th:size="${roles.size}"
+                                                        th:name="roles">
+                                                    <option th:each="role : ${roles}"
+                                                            th:selected="${#sets.contains(user.roles, role)}">
+                                                        <span th:text="${role}"></span>
+                                                    </option>
+                                                </select>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="submit" th:form="deleteForm + ${user.id}"
+                                                        class="btn btn-danger">Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- / Модальное окно -->
                         </td>
                     </tr>
@@ -129,8 +195,5 @@
         </div>
     </div>
 </div>
-<!--/container-->
-
 </body>
-
 </html>

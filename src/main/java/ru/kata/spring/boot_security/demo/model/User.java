@@ -145,6 +145,10 @@ public class User implements UserDetails {
         return !locked;
     }
 
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return passwordDate.plusMonths(1).isAfter(LocalDate.now());
@@ -157,5 +161,22 @@ public class User implements UserDetails {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", age=" + age +
+                ", roles=" + roles +
+                ", locked=" + locked +
+                ", enabled=" + enabled +
+                ", createdDate=" + createdDate +
+                ", passwordDate=" + passwordDate +
+                '}';
     }
 }

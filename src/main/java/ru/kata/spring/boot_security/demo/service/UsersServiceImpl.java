@@ -35,6 +35,7 @@ public class UsersServiceImpl implements UsersService {
     @Transactional
     public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEnabled(true);
         usersRepository.save(user);
     }
 

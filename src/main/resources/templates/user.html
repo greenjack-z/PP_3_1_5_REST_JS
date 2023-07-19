@@ -1,31 +1,69 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+      xmlns:th="http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 
-    <head th:insert="~{fragments/meta.html}">
-        <title>index page</title>
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+    <title>Admin panel</title>
+</head>
 
-    <body>
-    <!--header-->
-    <div th:replace="~{fragments/header.html}"></div>
-    <!--/header-->
-
-    <!--container-->
-    <div class="container">
-        <h1>User details:</h1>
-        <p th:text="'User id: ' + ${#authentication.principal.id}">
-        <p th:text="'Login: ' + ${#authentication.name}">
-        <p th:text="'User name: ' + ${#authentication.principal.name}">
-        <p th:text="'Age: ' + ${#authentication.principal.age}">
-        <p th:each="role : ${#authentication.principal.roles}" th:text="'Roles: ' + ${role.authority} + '.'">
+<body>
+<div class="container-fluid vh-100">
+    <header class="row p-3 text-bg-dark">
+        <div class="col">
+            <span class="fw-bold" th:text="${#authentication.name}"></span> with roles:
+            <span th:each="role : ${#authentication.principal.roles}">
+                <span th:text="${role}"> </span>
+            </span>
+        </div>
+        <div class="col-3 text-end">
+            <a class="fw-bold link-secondary link-underline-opacity-0" href="/logout">Logout</a>
+        </div>
+    </header>
+    <div class="row h-100">
+        <div class="col-2 p-2">
+            <div class="d-grid gap-2">
+                <a sec:authorize="hasRole('ADMIN')" class="btn btn-outline" href="/admin" role="button">Admin</a>
+                <a class="btn btn-primary" href="#" role="button">User</a>
+            </div>
+        </div>
+        <div class="col bg-light">
+            <h1 class="m-2">User information page</h1>
+            <div class="container">
+                <h2>About user</h2>
+                <table class="table table-striped">
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                    <tr>
+                        <td th:text="${#authentication.principal.id}"></td>
+                        <td th:text="${#authentication.principal.firstname}"></td>
+                        <td th:text="${#authentication.principal.lastname}"></td>
+                        <td th:text="${#authentication.principal.age}"></td>
+                        <td th:text="${#authentication.principal.email}"></td>
+                        <td>
+                            <span th:each="role : ${#authentication.principal.roles}">
+                                <span th:text="${role}"> </span>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
-    <!--/container-->
-
-    <!--footer-->
-    <div th:replace="~{fragments/footer.html}"></div>
-    <!--/footer-->
-    </body>
-
+</div>
+</body>
 </html>
