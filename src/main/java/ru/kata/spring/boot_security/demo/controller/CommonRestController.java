@@ -19,15 +19,15 @@ public class CommonRestController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<User> user(@ModelAttribute int id) {
-        User user = usersService.findById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK); //todo add catch exception
+    public ResponseEntity<String> user(@ModelAttribute int id) {
+//        User user = usersService.findById(id);
+        return new ResponseEntity<>("user", HttpStatus.OK); //todo add catch exception
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> users() {
-        List<User> users = usersService.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK); //todo add catch exception
+    public ResponseEntity<?> users() {
+          List<User> users = usersService.findAll();
+          return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping("/add")
