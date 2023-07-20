@@ -11,16 +11,16 @@ import ru.kata.spring.boot_security.demo.model.User;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UsersRepository usersRepository;
+    private final UsersService usersService;
 
     @Autowired
-    public UserDetailsServiceImpl(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public UserDetailsServiceImpl(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user =  usersRepository.findUserByEmail(username);
+        User user =  usersService.findUserByEmail(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }

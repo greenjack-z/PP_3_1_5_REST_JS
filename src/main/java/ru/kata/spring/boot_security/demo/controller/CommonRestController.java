@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UsersService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,32 +20,33 @@ public class CommonRestController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<String> user(@ModelAttribute int id) {
-//        User user = usersService.findById(id);
-        return new ResponseEntity<>("user", HttpStatus.OK); //todo add catch exception
+    public ResponseEntity<User> getLoggedUser(Principal principal) {
+
+        User user = usersService.findUserByEmail(principal.getName());
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/users")
-    public ResponseEntity<?> users() {
+    public ResponseEntity<List<User>> getAllUsers() {
           List<User> users = usersService.findAll();
           return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<User> add(@ModelAttribute User user) {
+    public ResponseEntity<User> addUser(@ModelAttribute User user) {
         usersService.saveUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED); //todo add catch
     }
 
     @PatchMapping("/edit")
-    public ResponseEntity<User> edit(@ModelAttribute User user) {
+    public ResponseEntity<User> editUser(@ModelAttribute User user) {
         usersService.saveUser(user);
         return new ResponseEntity<>(HttpStatus.OK); //todo add catch
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<User> delete(@ModelAttribute User user) {
-        usersService.deleteUser(user);
-        return new ResponseEntity<>(HttpStatus.OK); //todo add catch
+    @DeleteMapping
+    public ResponseEntity<User> deleteUser(@RequestParam int id) {
+        usersService.deleteUser(usersService.findById(id));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
