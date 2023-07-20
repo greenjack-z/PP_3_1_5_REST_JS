@@ -172,11 +172,11 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && age == user.age && locked == user.locked && enabled == user.enabled && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstname, user.firstname) && Objects.equals(lastname, user.lastname) && Objects.equals(roles, user.roles) && Objects.equals(createdDate, user.createdDate) && Objects.equals(passwordDate, user.passwordDate);
+        return Objects.equals(email, user.email) && Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, firstname, lastname, age, roles, locked, enabled, createdDate, passwordDate);
+        return Objects.hash(email, password);
     }
 }

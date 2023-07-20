@@ -41,11 +41,6 @@ public class AdminController {
 
     @PostMapping("/add")
     public String addUser(@ModelAttribute User user) {
-
-        System.err.println("we've got a user:");
-        System.err.println(user);
-
-
         usersService.saveUser(user);
         return ADMIN_REDIRECT;
     }
