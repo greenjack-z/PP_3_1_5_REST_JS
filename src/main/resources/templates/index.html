@@ -14,24 +14,78 @@
     <title>Admin panel</title>
 </head>
 <body>
+<div class="container-fluid vh-100">
+    <header class="row p-3 text-bg-dark">
+        <div class="col">
+            <span class="fw-bold" th:text="${#authentication.name}"></span> with roles:
+            <span th:each="role : ${#authentication.principal.roles}">
+                <span th:text="${role}"> </span>
+            </span>
+        </div>
+        <div class="col-3 text-end">
+            <a class="fw-bold link-secondary link-underline-opacity-0" href="/logout">Logout</a>
+        </div>
+    </header>
+    <div class="row h-100">
+        <div class="col-2 p-2">
+            <div class="d-grid gap-2">
+                <a id="adminButton" class="btn btn-primary" role="button" onclick="adminButtonClick()">Admin</a>
+                <a id="userButton" class="btn btn-outline" role="button" onclick="userButtonClick()">User</a>
+            </div>
+        </div>
+        <div class="col bg-light">
+            <h1 id="adminTitle" class="m-2">Admin panel</h1>
+            <h1 id="userTitle" class="m-2" style="display: none">User information page</h1>
+            <ul id="navTabs" class="nav nav-tabs">
+                <li class="nav-item">
+                    <a id="usersTab" class="nav-link active" onclick="usersTabClick()">Users table</a>
+                </li>
+                <li class="nav-item">
+                    <a id="newTab" class="nav-link" onclick="newTabClick()">New User</a>
+                </li>
+            </ul>
+            <div class="container">
+                <h2 id="captionAll">All users</h2>
+                <h2 id="captionOne" style="display: none">About user</h2>
+                <h2 id="captionNew" style="display: none">Create new user</h2>
+                <table id="table" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!--       placeholder for js filled table-->
+                    </tbody>
+                </table>
 
-
-    <h1>It's index page</h1>
-    <button onclick="buttonClick()">Fill</button>
-    <table id="table" class="table table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Age</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+                <table id="userTable" class="table table-striped" style="display: none">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!--       placeholder for js filled table-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
+
+

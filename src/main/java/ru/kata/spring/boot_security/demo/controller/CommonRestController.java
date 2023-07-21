@@ -43,8 +43,8 @@ public class CommonRestController {
         return new ResponseEntity<>(HttpStatus.OK); //todo add catch
     }
 
-    @DeleteMapping
-    public ResponseEntity<User> deleteUser(@RequestParam int id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable int id) {
         usersService.deleteUser(usersService.findById(id));
         return new ResponseEntity<>(HttpStatus.OK);
     }
