@@ -21,8 +21,7 @@ public class CommonRestController {
 
     @GetMapping("/user")
     public ResponseEntity<User> getLoggedUser(Principal principal) {
-
-        User user = usersService.findUserByEmail(principal.getName());
+        User user = usersService.findByEmail(principal.getName()).orElseThrow();
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

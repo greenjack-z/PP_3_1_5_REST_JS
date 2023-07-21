@@ -10,4 +10,9 @@ public class CommonController {
     public String getLoginPage() {
         return "login";
     }
+
+    @GetMapping("index")
+    public String index() {
+        return "index";
+    }
 }
