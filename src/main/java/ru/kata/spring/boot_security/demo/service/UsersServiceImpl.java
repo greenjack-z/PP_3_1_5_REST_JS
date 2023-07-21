@@ -5,18 +5,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.RolesRepository;
 import ru.kata.spring.boot_security.demo.repository.UsersRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UsersServiceImpl implements UsersService {
+public class UsersServiceImpl implements ru.kata.spring.boot_security.demo.service.UsersService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsersServiceImpl(UsersRepository usersRepository, RolesRepository rolesRepository, PasswordEncoder passwordEncoder) {
+    public UsersServiceImpl(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -32,8 +32,8 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public User findUserByEmail(String email) {
-        return usersRepository.findUserByEmail(email).orElseThrow();
+    public Optional<User> findByEmail(String email) {
+        return usersRepository.findUserByEmail(email);
     }
 
     @Override

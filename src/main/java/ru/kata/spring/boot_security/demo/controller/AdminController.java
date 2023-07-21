@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.WebDataBinder;
@@ -29,22 +30,17 @@ public class AdminController {
     }
 
     @GetMapping({"", "/", "/users"})
-    public String admin() {
+    public String getUsersPage() {
         return "users";
     }
 
     @GetMapping("/new")
-    public String newUser() {
+    public String getAddUserPage() {
         return "new";
     }
 
     @PostMapping("/add")
     public String addUser(@ModelAttribute User user) {
-
-        System.err.println("we've got a user:");
-        System.err.println(user);
-
-
         usersService.saveUser(user);
         return ADMIN_REDIRECT;
     }
@@ -62,12 +58,12 @@ public class AdminController {
     }
 
     @ModelAttribute("allUsers")
-    public List<User> allUsers() {
+    public List<User> getAllUsers() {
         return usersService.findAll();
     }
 
     @ModelAttribute("roles")
-    public List<Role> roles() {
+    public List<Role> getAllRoles() {
         return rolesService.findAll();
     }
 

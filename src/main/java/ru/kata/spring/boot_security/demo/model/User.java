@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,8 +33,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private int age;
 
-    @JsonManagedReference
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
@@ -64,7 +62,6 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    @JsonIgnore
     @Override
     public String getUsername() {
         return getEmail();
@@ -121,20 +118,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return age == user.age && Objects.equals(firstname, user.firstname);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstname, age);
-    }
-
-    @JsonIgnore
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
     }
@@ -182,5 +165,18 @@ public class User implements UserDetails {
                 ", createdDate=" + createdDate +
                 ", passwordDate=" + passwordDate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(email, user.email) && Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, password);
     }
 }

@@ -1,14 +1,9 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serializable;
-import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
@@ -20,10 +15,6 @@ public class Role implements GrantedAuthority {
 
     @Column(nullable = false, unique = true)
     private String authority;
-
-    @JsonBackReference
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
 
     public Role() {
         //constructor for Hibernate
@@ -42,17 +33,21 @@ public class Role implements GrantedAuthority {
         return this;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void addUser(User user) {
-        users.add(user);
-    }
-
     @Override
     public String toString() {
         return authority.replaceFirst("ROLE_", "");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(authority, role.authority);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(authority);
+    }
 }
