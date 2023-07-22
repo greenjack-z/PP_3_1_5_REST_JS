@@ -81,6 +81,49 @@
                     <!--       placeholder for js filled table-->
                     </tbody>
                 </table>
+
+                <!-- Модальное окно -->
+                <div id="modalWindow" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit user</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body mx-5 px-5 text-center">
+                                <form id="form">
+                                    <label class="form-label mb-0">ID</label>
+                                    <input id="input-id" type="number" disabled class="form-control mb-2" name="id">
+                                    <label class="form-label mb-0">First Name</label>
+                                    <input id="input-firstname" type="text" class="form-control mb-2" name="firstname">
+                                    <label class="form-label mb-0">Last Name</label>
+                                    <input id="input-lastmane" type="text" class="form-control mb-2" name="lastname">
+                                    <label class="form-label mb-0">Age</label>
+                                    <input id="input-age" type="number" class="form-control mb-2" name="age">
+                                    <label class="form-label mb-0">E-mail</label>
+                                    <input id="input-email" type="email" class="form-control mb-2" name="email">
+                                    <label class="form-label mb-0">Password</label>
+                                    <input id="input-password" type="password" class="form-control mb-2" name="password">
+                                    <label class="form-label mb-0">Roles</label>
+                                    <select id="select-roles" class="form-select mb-2" multiple>
+                                    </select>
+                                    <input id="checkbox-enabled" type="checkbox" class="form-check-input" name="enabled">
+                                    <label class="form-check-label mb-0">Enabled</label>
+                                    <input id="checkbox-locked" type="checkbox" class="form-check-input" name="locked">
+                                    <label class="form-check-label mb-0">Locked</label>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / Модальное окно -->
+
             </div>
         </div>
     </div>

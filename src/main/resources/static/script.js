@@ -17,6 +17,15 @@ async function deleteUserRequest(id) {
     }
 }
 
+function populateUserInfo(user) {
+    document.getElementById("input-id").value = user.id;
+    document.getElementById("input-firstname").value = user.firstname;
+    document.getElementById("input-lastmane").value = user.lastname;
+    document.getElementById("input-age").value = user.age;
+    document.getElementById("input-email").value = user.username;
+    document.getElementById("input-password").value = user.password;
+}
+
 function addRow(user) {
     let tBody = document.getElementById("table").getElementsByTagName("tbody")[0];
 
@@ -56,7 +65,8 @@ function addRow(user) {
     buttonDelete.id = "d" + user.id;
     buttonDelete.value = "Delete";
     buttonDelete.onclick = function() {
-        deleteUserRequest(user.id);
+        // deleteUserRequest(user.id);
+        populateUserInfo(user);
     };
 
     cellID.appendChild(textID);
