@@ -48,17 +48,16 @@ public class CommonRestController {
     }
 
     @PatchMapping("/edit")
-    public ResponseEntity<User> editUser(@RequestBody User user) {
-        try {
-            return new ResponseEntity<>(usersService.updateUser(user), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @ResponseStatus(HttpStatus.OK)
+    public User editUser(@RequestBody User user) {
+        User newUser = usersService.updateUser(user);
+        System.err.println(newUser);
+        return newUser;
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable int id) {
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser(@PathVariable int id) {
         usersService.deleteUser(usersService.findById(id));
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

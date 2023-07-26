@@ -4,15 +4,16 @@ window.onload = async function () {
     console.log(loggedUser)
     window.roles = await fetchRoles();
 
-    document.getElementById("loggedUser").innerHTML = loggedUser.username;
-    document.getElementById("loggedUserRoles").innerHTML = loggedUser.roles.map(role => role.authority).map(s => s.replace("ROLE_", " "));
+    document.getElementById("logged-user").innerHTML = loggedUser.email;
+    document.getElementById("logged-user-roles").innerHTML = loggedUser.roles.map(role => role.authority).map(s => s.replace("ROLE_", " "));
 
     let select = document.getElementById("new-form").children.namedItem("new-roles");
     fillSelectWithRoles(select, null);
 
-    addUserInTable(loggedUser, document.getElementById("user-table-body"));
+    writeUserDataInTableRow(loggedUser, document.getElementById("user-table-body").insertRow());
+
     users.forEach((user, index) => {
-        addUserInAdminTable(user, index, document.getElementById("admin-table-body"));
+        writeAdminDataInTableRow(user, index, document.getElementById("admin-table-body").insertRow());
     })
 
     let modalWindow = document.getElementById("modalWindow");
@@ -31,7 +32,12 @@ window.onload = async function () {
 
     modalWindow.addEventListener("submit", event => {
         event.preventDefault();
-        deleteUser(event.submitter.value);
+        if (event.submitter.innerHTML === "Delete") {
+            deleteUser(event.submitter.value);
+        }
+        if (event.submitter.innerHTML === "Save changes") {
+            updateUser(event.target);
+        }
         return false;
     })
 
@@ -58,9 +64,9 @@ async function fetchRoles() {
     return await response.json();
 }
 
-function addUserInTable(user, table) {
-    let row = table.insertRow();
+function writeUserDataInTableRow(user, row) {
     row.id = "r" + user.id;
+    row.innerHTML = "";
     row.insertCell(0).innerHTML = user.id;
     row.insertCell(1).innerHTML = user.firstname;
     row.insertCell(2).innerHTML = user.lastname;
@@ -84,9 +90,8 @@ function createInTableButton(btnClass, btnValue, userIndex, userId, caption, okT
     return button;
 }
 
-function addUserInAdminTable(user, index, table) {
-    addUserInTable(user, table);
-    let row = table.rows[table.rows.length - 1];
+function writeAdminDataInTableRow(user, index, row) {
+    writeUserDataInTableRow(user, row);
     row.insertCell(row.cells.length).appendChild(createInTableButton("btn-info", "Edit", index, user.id, "Edit user", "Save changes", "false"));
     row.insertCell(row.cells.length).appendChild(createInTableButton("btn-danger", "Delete", index, user.id, "Delete user", "Delete", "true"));
 }
@@ -139,12 +144,31 @@ async function addUser(form){
     let response = await(fetch("/api/add", {method: "POST", headers: {"Content-Type": "application/json"},  body: json}));
     if (response.status === 201) {
         let user = await response.json();
-        addUserInAdminTable(user, window.users.length, document.getElementById("admin-table-body"));
+        writeAdminDataInTableRow(user, window.users.length, document.getElementById("admin-table-body"));
         users.push(user);
         document.getElementById("users-tab").click();
     }
 }
 
+async function updateUser(form){
+    let formData = new FormData(form);
+    let formDataObject = Object.fromEntries(formData);
+    let rolesList = formData.getAll("roles").map(name => new Object({authority: ("ROLE_" + name)}));
+    formDataObject.id = document.getElementById("input-id").value;
+    formDataObject.roles = rolesList;
+    formDataObject.enabled = formDataObject.enabled === "on";
+    formDataObject.locked = formDataObject.locked === "on";
+    console.log(formDataObject);
+    let json = JSON.stringify(formDataObject);
+    console.log(json);
 
+    let response = await(fetch("/api/edit", {method: "PATCH", headers: {"Content-Type": "application/json"},  body: json}));
+    if (response.status === 200) {
+        let user = await response.json();
+        console.log("Updated user: " + user);
+        writeAdminDataInTableRow(user, users.findIndex(value => value === user), document.getElementById("r" + user.id));
+        document.getElementById("button-modal-cancel").click();
+    }
+}
 
 

@@ -44,11 +44,13 @@ public class User implements UserDetails {
     private boolean enabled;
 
     @Column(name = "created_date", nullable = false, updatable = false)
-    @CreationTimestamp
+    @Temporal(TemporalType.DATE)
+    @JsonIgnore
     private LocalDate createdDate;
 
     @Column(name = "password_date", nullable = false)
     @Temporal(TemporalType.DATE)
+    @JsonIgnore
     private LocalDate passwordDate;
 
     public User() {
@@ -126,6 +128,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return createdDate.plusYears(1).isAfter(LocalDate.now());
     }
@@ -140,6 +143,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return passwordDate.plusMonths(1).isAfter(LocalDate.now());
     }
