@@ -69,9 +69,7 @@
                             </span>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                    th:data-bs-target="'#editModal' + ${user.id}">Edit
-                            </button>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" th:data-bs-target="'#editModal' + ${user.id}">Edit</button>
                             <!-- Модальное окно -->
                             <div class="modal fade" th:id="editModal + ${user.id}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered modal-md">

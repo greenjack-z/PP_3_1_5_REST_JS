@@ -14,7 +14,7 @@
     <title>Admin panel</title>
 </head>
 <body>
-<div class="container-fluid vh-100">
+<div class="container-fluid d-flex min-vh-100 flex-column">
     <header class="row p-3 text-bg-dark">
         <div class="col">
             <span class="fw-bold" th:text="${#authentication.name}"></span> with roles:
@@ -26,16 +26,15 @@
             <a class="fw-bold link-secondary link-underline-opacity-0" href="/logout">Logout</a>
         </div>
     </header>
-    <div class="row h-100">
-        <div class="col-2 p-2">
-            <div class="d-grid gap-2">
-                <a id="adminButton" class="btn btn-primary" role="button" onclick="adminButtonClick()">Admin</a>
-                <a id="userButton" class="btn btn-outline" role="button" onclick="userButtonClick()">User</a>
+    <div class="row flex-fill fill d-flex justify-content-start">
+        <div class="col-3 p-2" role="tablist">
+            <div class="nav flex-column nav-pills me-3" id="side-bar" role="tablist">
+                <button id="adminButton" class="nav-link-active" type="button" role="tab">Admin</button>
+                <button id="userButton" class="btn btn-outline" role="button">User</button>
             </div>
         </div>
         <div class="col bg-light">
-            <h1 id="adminTitle" class="m-2">Admin panel</h1>
-            <h1 id="userTitle" class="m-2" style="display: none">User information page</h1>
+            <h1 id="pageCaption" class="m-2">Page Default Caption</h1><h1 id="pageCaption" class="m-2">Page Default Caption</h1>
             <ul id="navTabs" class="nav nav-tabs">
                 <li class="nav-item">
                     <a id="usersTab" class="nav-link active" onclick="usersTabClick()">Users table</a>
@@ -44,29 +43,29 @@
                     <a id="newTab" class="nav-link" onclick="newTabClick()">New User</a>
                 </li>
             </ul>
-            <div class="container">
-                <h2 id="captionAll">All users</h2>
-                <h2 id="captionOne" style="display: none">About user</h2>
-                <h2 id="captionNew" style="display: none">Create new user</h2>
-                <table id="table" class="table table-striped">
+            <div class="container-fluid">
+                <h2 id="tableCaption" class="m-2">All users</h2>
+                <table id="adminTable" class="table table-striped">
                     <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Age</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                    </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Age</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
                     </thead>
                     <tbody>
                     <!--       placeholder for js filled table-->
                     </tbody>
                 </table>
+            </div>
 
-                <table id="userTable" class="table table-striped" style="display: none">
+            <div>
+                <table id="userTable" class="table table-striped">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -83,46 +82,71 @@
                 </table>
 
                 <!-- Модальное окно -->
-                <div id="modalWindow" tabindex="-1">
+                <div class="modal fade" id="modalWindow" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered modal-md">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Edit user</h5>
+                                <h5 id="form-caption" class="modal-title"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body mx-5 px-5 text-center">
                                 <form id="form">
-                                    <label class="form-label mb-0">ID</label>
+                                    <label for="input-id" class="form-label mb-0">ID</label>
                                     <input id="input-id" type="number" disabled class="form-control mb-2" name="id">
-                                    <label class="form-label mb-0">First Name</label>
+                                    <label for="input-firstname" class="form-label mb-0">First Name</label>
                                     <input id="input-firstname" type="text" class="form-control mb-2" name="firstname">
-                                    <label class="form-label mb-0">Last Name</label>
+                                    <label for="input-lastmane" class="form-label mb-0">Last Name</label>
                                     <input id="input-lastmane" type="text" class="form-control mb-2" name="lastname">
-                                    <label class="form-label mb-0">Age</label>
+                                    <label for="input-age" class="form-label mb-0">Age</label>
                                     <input id="input-age" type="number" class="form-control mb-2" name="age">
-                                    <label class="form-label mb-0">E-mail</label>
+                                    <label for="input-email" class="form-label mb-0">E-mail</label>
                                     <input id="input-email" type="email" class="form-control mb-2" name="email">
-                                    <label class="form-label mb-0">Password</label>
+                                    <label for="input-password" class="form-label mb-0">Password</label>
                                     <input id="input-password" type="password" class="form-control mb-2" name="password">
-                                    <label class="form-label mb-0">Roles</label>
-                                    <select id="select-roles" class="form-select mb-2" multiple>
+                                    <label for="select-roles" class="form-label mb-0">Roles</label>
+                                    <select id="select-roles" class="form-select mb-2" multiple name="roles">
                                     </select>
                                     <input id="checkbox-enabled" type="checkbox" class="form-check-input" name="enabled">
-                                    <label class="form-check-label mb-0">Enabled</label>
+                                    <label for="checkbox-enabled" class="form-check-label mb-0">Enabled</label>
                                     <input id="checkbox-locked" type="checkbox" class="form-check-input" name="locked">
-                                    <label class="form-check-label mb-0">Locked</label>
+                                    <label for="checkbox-locked" class="form-check-label mb-0">Locked</label>
                                 </form>
                             </div>
                             <div class="modal-footer">
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                    <button id="button-modal-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button id="button-modal-OK" type="button" class="btn"></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- / Модальное окно -->
+
+                <div id="new-user" class="row" style="display: none">
+                    <div class="col-3"></div>
+                    <div class="col justify-content-center">
+                        <form id="newForm">
+                            <label for="new-firstname" class="form-label mb-0">First Name</label>
+                            <input id="new-firstname" type="text" class="form-control mb-2" name="firstname">
+                            <label for="new-lastname" class="form-label mb-0">Last Name</label>
+                            <input id="new-lastname" type="text" class="form-control mb-2" name="lastname">
+                            <label for="new-age" class="form-label mb-0">Age</label>
+                            <input id="new-age" type="number" class="form-control mb-2" name="age">
+                            <label for="new-email" class="form-label mb-0">E-mail</label>
+                            <input id="new-email" type="email" class="form-control mb-2" name="email">
+                            <label for="new-password" class="form-label mb-0">Password</label>
+                            <input id="new-password" type="password" class="form-control mb-2" name="password">
+                            <label for="new-roles" class="form-label mb-0">Roles</label>
+                            <select id="new-roles" class="form-select mb-2" name="roles" multiple></select>
+                        </form>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-success" onclick="addUser()">Add user</button>
+                        </div>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
 
             </div>
         </div>

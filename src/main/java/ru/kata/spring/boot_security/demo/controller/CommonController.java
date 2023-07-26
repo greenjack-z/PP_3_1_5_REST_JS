@@ -15,4 +15,9 @@ public class CommonController {
     public String index() {
         return "index";
     }
+
+    @GetMapping("newIndex")
+    public String newIndex() {
+        return "newIndex";
+    }
 }

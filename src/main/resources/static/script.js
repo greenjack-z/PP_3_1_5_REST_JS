@@ -1,14 +1,107 @@
-window.onload = async function() {
-    let response = await(fetch("/api/users"));
-    let users = await response.json();
-    users.forEach(item => addRow(item));
+window.onload = async function () {
+    window.users = await fetchUsers();
+    window.loggedUser = await fetchLoggedUser();
+    window.roles = await fetchRoles();
 
-    response = await(fetch("/api/user"));
-    let user = await response.json();
-    addShortRow(user);
+    document.getElementById("loggedUser").innerHTML = loggedUser.username;
+    document.getElementById("loggedUserRoles").innerHTML = loggedUser.roles.map(role => role.authority).map(s => s.replace("ROLE_", " "));
+
+    let select = document.getElementById("new-form").children.namedItem("new-roles");
+    fillSelectWithRoles(select, null);
+
+    addUserInTable(loggedUser, document.getElementById("user-table-body"));
+    users.forEach((user, index) => {
+        addUserInAdminTable(user, index, document.getElementById("admin-table-body"));
+    })
+
+    let modalWindow = document.getElementById("modalWindow");
+    modalWindow.addEventListener("show.bs.modal", event => {
+        let button = event.relatedTarget;
+        let form = document.getElementById("modal-form");
+        let userIndex = button.getAttribute("data-bs-index");
+        fillFormWithUserData(users[userIndex], form);
+    })
+
+    let newForm = document.getElementById("new-form");
+    newForm.addEventListener("submit", event => {
+        event.preventDefault();
+        addUser(event.target);
+        return false;
+    })
 }
 
-async function deleteUserRequest(id) {
+async function fetchUsers() {
+    let response = await(fetch("/api/users"));
+    return await response.json();
+}
+
+async function fetchLoggedUser() {
+    let response = await(fetch("/api/user"));
+    return await response.json();
+}
+
+async function fetchRoles() {
+    let response = await(fetch("/api/roles"));
+    return await response.json();
+}
+
+function addUserInTable(user, table) {
+    let row = table.insertRow();
+    row.insertCell(0).innerHTML = user.id;
+    row.insertCell(1).innerHTML = user.firstname;
+    row.insertCell(2).innerHTML = user.lastname;
+    row.insertCell(3).innerHTML = user.age;
+    row.insertCell(4).innerHTML = user.email;
+    row.insertCell(5).innerHTML = user.roles.map(role => role.authority).map(s => s.replace("ROLE_", " "));
+}
+
+function createInTableButton(btnClass, btnValue, userIndex) {
+    let button = document.createElement("input");
+    button.type = "button";
+    button.classList.add("btn", btnClass);
+    button.value = btnValue;
+    button.dataset.bsToggle = "modal";
+    button.dataset.bsTarget = "#modalWindow";
+    button.dataset.bsIndex = userIndex;
+    return button;
+}
+
+function addUserInAdminTable(user, index, table) {
+    addUserInTable(user, table);
+    let row = table.rows[table.rows.length - 1];
+    row.insertCell(row.cells.length).appendChild(createInTableButton("btn-info", "Edit", index));
+    row.insertCell(row.cells.length).appendChild(createInTableButton("btn-danger", "Delete", index));
+}
+
+function fillFormWithUserData(user, form) {
+    form.children.namedItem("input-id").value = user.id;
+    form.children.namedItem("input-firstname").value = user.firstname;
+    form.children.namedItem("input-lastname").value = user.lastname;
+    form.children.namedItem("input-age").value = user.age;
+    form.children.namedItem("input-email").value = user.email;
+    form.children.namedItem("input-password").value = user.password;
+
+    let select = form.children.namedItem("select-roles");
+    fillSelectWithRoles(select, user);
+
+    form.children.namedItem("checkbox-enabled").checked = user.enabled;
+    form.children.namedItem("checkbox-locked").checked = user.locked;
+}
+
+function fillSelectWithRoles(select, user) {
+    select.size = roles.length;
+    select.innerHTML = "";
+    roles.forEach(role => {
+        let option = document.createElement("option");
+        option.innerHTML = role.authority.replace("ROLE_", "");
+        if (user != null) {
+            option.selected = user.roles.map(r => r.authority).includes(role.authority);
+        }
+        select.appendChild(option);
+    })
+}
+
+async function deleteUser(id) {
     let response = await(fetch("/api/" + id, {method: "DELETE"}));
     console.log(response.status);
     if (response.ok) {
@@ -17,154 +110,25 @@ async function deleteUserRequest(id) {
     }
 }
 
-function populateUserInfo(user) {
-    document.getElementById("input-id").value = user.id;
-    document.getElementById("input-firstname").value = user.firstname;
-    document.getElementById("input-lastmane").value = user.lastname;
-    document.getElementById("input-age").value = user.age;
-    document.getElementById("input-email").value = user.username;
-    document.getElementById("input-password").value = user.password;
+async function addUser(form){
+    let formData = new FormData(form);
+    let formDataObject = Object.fromEntries(formData);
+    let rolesList = formData.getAll("roles").map(name => new Object({authority: ("ROLE_" + name)}));
+    formDataObject.roles = rolesList;
+    console.log(formDataObject);
+    let json = JSON.stringify(formDataObject);
+    console.log(json);
+
+    let response = await(fetch("/api/add", {method: "POST", headers: {"Content-Type": "application/json"},  body: json}));
+    console.log(response.status);
+    if (response.status === 201) {
+        let user = await response.json();
+        console.log(user);
+        addUserInAdminTable(user, window.users.length, document.getElementById("admin-table-body"));
+        document.getElementById("users-tab").click();
+    }
 }
 
-function addRow(user) {
-    let tBody = document.getElementById("table").getElementsByTagName("tbody")[0];
-
-    let row = document.createElement("tr");
-    row.id = "r" + user.id;
-
-    let cellID = document.createElement("td");
-    let cellFirst = document.createElement("td");
-    let cellLast = document.createElement("td");
-    let cellAge = document.createElement("td");
-    let cellEmail = document.createElement("td");
-    let cellRole = document.createElement("td");
-    let cellEdit = document.createElement("td");
-    let cellDelete = document.createElement("td");
-
-    let textID = document.createTextNode(user.id);
-    let textFirst = document.createTextNode(user.firstname);
-    let textLast = document.createTextNode(user.lastname);
-    let textAge = document.createTextNode(user.age);
-    let textEmail = document.createTextNode(user.email);
-    let rolesList = user.roles.map(role => role.authority);
-    let textRoles = document.createTextNode(rolesList.map(string => string.replace("ROLE_", "")));
 
 
-    let buttonEdit = document.createElement("input");
-    buttonEdit.type = "button";
-    buttonEdit.classList.add("btn", "btn-info");
-    buttonEdit.id = "e" + user.id;
-    buttonEdit.value = "Edit";
-    buttonEdit.onclick = function() {
-//            deleteUserRequest(user.id);
-    };
-
-    let buttonDelete = document.createElement("input");
-    buttonDelete.type = "button";
-    buttonDelete.classList.add("btn", "btn-danger");
-    buttonDelete.id = "d" + user.id;
-    buttonDelete.value = "Delete";
-    buttonDelete.onclick = function() {
-        // deleteUserRequest(user.id);
-        populateUserInfo(user);
-    };
-
-    cellID.appendChild(textID);
-    cellFirst.appendChild(textFirst);
-    cellLast.appendChild(textLast);
-    cellAge.appendChild(textAge);
-    cellEmail.appendChild(textEmail);
-    cellRole.appendChild(textRoles);
-    cellEdit.appendChild(buttonEdit);
-    cellDelete.appendChild(buttonDelete);
-
-    row.appendChild(cellID);
-    row.appendChild(cellFirst);
-    row.appendChild(cellLast);
-    row.appendChild(cellAge);
-    row.appendChild(cellEmail);
-    row.appendChild(cellRole);
-    row.appendChild(cellEdit);
-    row.appendChild(cellDelete);
-
-    tBody.appendChild(row);
-}
-
-function addShortRow(user) {
-    let tBody = document.getElementById("userTable").getElementsByTagName("tbody")[0];
-
-    let row = document.createElement("tr");
-    row.id = "r" + user.id;
-
-    let cellID = document.createElement("td");
-    let cellFirst = document.createElement("td");
-    let cellLast = document.createElement("td");
-    let cellAge = document.createElement("td");
-    let cellEmail = document.createElement("td");
-    let cellRole = document.createElement("td");
-
-    let textID = document.createTextNode(user.id);
-    let textFirst = document.createTextNode(user.firstname);
-    let textLast = document.createTextNode(user.lastname);
-    let textAge = document.createTextNode(user.age);
-    let textEmail = document.createTextNode(user.email);
-    let rolesList = user.roles.map(role => role.authority);
-    let textRoles = document.createTextNode(rolesList.map(string => string.replace("ROLE_", "")));
-
-    cellID.appendChild(textID);
-    cellFirst.appendChild(textFirst);
-    cellLast.appendChild(textLast);
-    cellAge.appendChild(textAge);
-    cellEmail.appendChild(textEmail);
-    cellRole.appendChild(textRoles);
-
-    row.appendChild(cellID);
-    row.appendChild(cellFirst);
-    row.appendChild(cellLast);
-    row.appendChild(cellAge);
-    row.appendChild(cellEmail);
-    row.appendChild(cellRole);
-
-    tBody.appendChild(row);
-}
-
-function newTabClick() {
-    document.getElementById("newTab").classList.add("active");
-    document.getElementById("usersTab").classList.remove("active");
-    document.getElementById("table").style.display = "none";
-    document.getElementById("captionAll").style.display = "none";
-    document.getElementById("captionNew").style.display = "";
-}
-
-function usersTabClick() {
-    document.getElementById("newTab").classList.remove("active");
-    document.getElementById("usersTab").classList.add("active");
-    document.getElementById("table").style.display = "";
-    document.getElementById("captionAll").style.display = "";
-    document.getElementById("captionNew").style.display = "none";
-}
-
-function userButtonClick() {
-    document.getElementById("userButton").classList.add("btn-primary")
-    document.getElementById("adminButton").classList.remove("btn-primary")
-    document.getElementById("captionAll").style.display = "none";
-    document.getElementById("captionOne").style.display = "";
-    document.getElementById("navTabs").style.display = "none";
-    document.getElementById("table").style.display = "none";
-    document.getElementById("adminTitle").style.display = "none";
-    document.getElementById("userTitle").style.display = "";
-    document.getElementById("userTable").style.display = "";
-}
-
-function adminButtonClick() {
-    document.getElementById("userButton").classList.remove("btn-primary")
-    document.getElementById("adminButton").classList.add("btn-primary")
-    document.getElementById("captionAll").style.display = "";
-    document.getElementById("captionOne").style.display = "none";
-    document.getElementById("navTabs").style.display = "";
-    document.getElementById("table").style.display = "";
-    document.getElementById("adminTitle").style.display = "";
-    document.getElementById("userTitle").style.display = "none";
-    document.getElementById("userTable").style.display = "none";
-}
 
