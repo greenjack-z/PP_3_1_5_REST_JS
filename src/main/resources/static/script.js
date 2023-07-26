@@ -1,52 +1,53 @@
 window.onload = async function () {
-    window.users = await fetchUsers();
     window.loggedUser = await fetchLoggedUser();
-    console.log(loggedUser)
-    window.roles = await fetchRoles();
-
     document.getElementById("logged-user").innerHTML = loggedUser.email;
-    document.getElementById("logged-user-roles").innerHTML = loggedUser.roles.map(role => role.authority).map(s => s.replace("ROLE_", " "));
-
-    let select = document.getElementById("new-form").children.namedItem("new-roles");
-    fillSelectWithRoles(select, null);
-
+    const userRoles = loggedUser.roles.map(role => role.authority).map(s => s.replace("ROLE_", " "));
+    document.getElementById("logged-user-roles").innerHTML = userRoles;
     writeUserDataInTableRow(loggedUser, document.getElementById("user-table-body").insertRow());
 
-    users.forEach((user, index) => {
-        writeAdminDataInTableRow(user, index, document.getElementById("admin-table-body").insertRow());
-    })
+    if(userRoles.map(role => role.trim()).includes("ADMIN")) {
+        window.users = await fetchUsers();
+        users.forEach((user, index) => {
+            writeAdminDataInTableRow(user, index, document.getElementById("admin-table-body").insertRow());
+        })
+        window.roles = await fetchRoles();
+        let select = document.getElementById("new-form").children.namedItem("new-roles");
+        fillSelectWithRoles(select, null);
 
-    let modalWindow = document.getElementById("modalWindow");
-    modalWindow.addEventListener("show.bs.modal", event => {
-        let button = event.relatedTarget;
-        document.getElementById("modal-caption").innerHTML = button.getAttribute("data-bs-caption");
-        let form = document.getElementById("modal-fieldset");
-        let userIndex = button.getAttribute("data-bs-index");
-        form.disabled = button.getAttribute("data-bs-form-disabled") === "true";
-        fillFormWithUserData(users[userIndex], form);
-        let okButton = document.getElementById("button-modal-OK");
-        okButton.innerHTML = button.getAttribute("data-bs-ok-text");
-        okButton.classList = button.classList;
-        okButton.value = button.getAttribute("data-bs-user-id");
-    })
+        let modalWindow = document.getElementById("modalWindow");
+        modalWindow.addEventListener("show.bs.modal", event => {
+            let button = event.relatedTarget;
+            document.getElementById("modal-caption").innerHTML = button.getAttribute("data-bs-caption");
+            let form = document.getElementById("modal-fieldset");
+            let userIndex = button.getAttribute("data-bs-index");
+            form.disabled = button.getAttribute("data-bs-form-disabled") === "true";
+            fillFormWithUserData(users[userIndex], form);
+            let okButton = document.getElementById("button-modal-OK");
+            okButton.innerHTML = button.getAttribute("data-bs-ok-text");
+            okButton.classList = button.classList;
+            okButton.value = button.getAttribute("data-bs-user-id");
+        })
 
-    modalWindow.addEventListener("submit", event => {
-        event.preventDefault();
-        if (event.submitter.innerHTML === "Delete") {
-            deleteUser(event.submitter.value);
-        }
-        if (event.submitter.innerHTML === "Save changes") {
-            updateUser(event.target);
-        }
-        return false;
-    })
+        modalWindow.addEventListener("submit", event => {
+            event.preventDefault();
+            if (event.submitter.innerHTML === "Delete") {
+                deleteUser(event.submitter.value);
+            }
+            if (event.submitter.innerHTML === "Save changes") {
+                updateUser(event.target);
+            }
+            return false;
+        })
 
-    let newForm = document.getElementById("new-form");
-    newForm.addEventListener("submit", event => {
-        event.preventDefault();
-        addUser(event.target);
-        return false;
-    })
+        let newForm = document.getElementById("new-form");
+        newForm.addEventListener("submit", event => {
+            event.preventDefault();
+            addUser(event.target);
+            return false;
+        })
+
+        document.getElementById("admin-tab").click();
+    }
 }
 
 async function fetchUsers() {
@@ -65,8 +66,8 @@ async function fetchRoles() {
 }
 
 function writeUserDataInTableRow(user, row) {
-    row.id = "r" + user.id;
     row.innerHTML = "";
+    row.id = "r" + user.id;
     row.insertCell(0).innerHTML = user.id;
     row.insertCell(1).innerHTML = user.firstname;
     row.insertCell(2).innerHTML = user.lastname;
@@ -144,7 +145,7 @@ async function addUser(form){
     let response = await(fetch("/api/add", {method: "POST", headers: {"Content-Type": "application/json"},  body: json}));
     if (response.status === 201) {
         let user = await response.json();
-        writeAdminDataInTableRow(user, window.users.length, document.getElementById("admin-table-body"));
+        writeAdminDataInTableRow(user, users.length, document.getElementById("admin-table-body").insertRow());
         users.push(user);
         document.getElementById("users-tab").click();
     }
@@ -165,8 +166,9 @@ async function updateUser(form){
     let response = await(fetch("/api/edit", {method: "PATCH", headers: {"Content-Type": "application/json"},  body: json}));
     if (response.status === 200) {
         let user = await response.json();
-        console.log("Updated user: " + user);
-        writeAdminDataInTableRow(user, users.findIndex(value => value === user), document.getElementById("r" + user.id));
+        let index = users.findIndex((value) => value.id === user.id);
+        users[index] = user;
+        writeAdminDataInTableRow(user, index, document.getElementById("r" + user.id));
         document.getElementById("button-modal-cancel").click();
     }
 }

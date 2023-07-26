@@ -44,7 +44,7 @@ public class User implements UserDetails {
     private boolean enabled;
 
     @Column(name = "created_date", nullable = false, updatable = false)
-    @Temporal(TemporalType.DATE)
+    @CreationTimestamp
     @JsonIgnore
     private LocalDate createdDate;
 
