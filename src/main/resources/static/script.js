@@ -1,6 +1,7 @@
 window.onload = async function () {
     window.users = await fetchUsers();
     window.loggedUser = await fetchLoggedUser();
+    console.log(loggedUser)
     window.roles = await fetchRoles();
 
     document.getElementById("loggedUser").innerHTML = loggedUser.username;
@@ -17,9 +18,21 @@ window.onload = async function () {
     let modalWindow = document.getElementById("modalWindow");
     modalWindow.addEventListener("show.bs.modal", event => {
         let button = event.relatedTarget;
-        let form = document.getElementById("modal-form");
+        document.getElementById("modal-caption").innerHTML = button.getAttribute("data-bs-caption");
+        let form = document.getElementById("modal-fieldset");
         let userIndex = button.getAttribute("data-bs-index");
+        form.disabled = button.getAttribute("data-bs-form-disabled") === "true";
         fillFormWithUserData(users[userIndex], form);
+        let okButton = document.getElementById("button-modal-OK");
+        okButton.innerHTML = button.getAttribute("data-bs-ok-text");
+        okButton.classList = button.classList;
+        okButton.value = button.getAttribute("data-bs-user-id");
+    })
+
+    modalWindow.addEventListener("submit", event => {
+        event.preventDefault();
+        deleteUser(event.submitter.value);
+        return false;
     })
 
     let newForm = document.getElementById("new-form");
@@ -47,6 +60,7 @@ async function fetchRoles() {
 
 function addUserInTable(user, table) {
     let row = table.insertRow();
+    row.id = "r" + user.id;
     row.insertCell(0).innerHTML = user.id;
     row.insertCell(1).innerHTML = user.firstname;
     row.insertCell(2).innerHTML = user.lastname;
@@ -55,7 +69,7 @@ function addUserInTable(user, table) {
     row.insertCell(5).innerHTML = user.roles.map(role => role.authority).map(s => s.replace("ROLE_", " "));
 }
 
-function createInTableButton(btnClass, btnValue, userIndex) {
+function createInTableButton(btnClass, btnValue, userIndex, userId, caption, okText, formDisabled) {
     let button = document.createElement("input");
     button.type = "button";
     button.classList.add("btn", btnClass);
@@ -63,14 +77,18 @@ function createInTableButton(btnClass, btnValue, userIndex) {
     button.dataset.bsToggle = "modal";
     button.dataset.bsTarget = "#modalWindow";
     button.dataset.bsIndex = userIndex;
+    button.dataset.bsUserId = userId;
+    button.dataset.bsCaption = caption;
+    button.dataset.bsOkText = okText;
+    button.dataset.bsFormDisabled = formDisabled;
     return button;
 }
 
 function addUserInAdminTable(user, index, table) {
     addUserInTable(user, table);
     let row = table.rows[table.rows.length - 1];
-    row.insertCell(row.cells.length).appendChild(createInTableButton("btn-info", "Edit", index));
-    row.insertCell(row.cells.length).appendChild(createInTableButton("btn-danger", "Delete", index));
+    row.insertCell(row.cells.length).appendChild(createInTableButton("btn-info", "Edit", index, user.id, "Edit user", "Save changes", "false"));
+    row.insertCell(row.cells.length).appendChild(createInTableButton("btn-danger", "Delete", index, user.id, "Delete user", "Delete", "true"));
 }
 
 function fillFormWithUserData(user, form) {
@@ -107,6 +125,7 @@ async function deleteUser(id) {
     if (response.ok) {
         let row = document.getElementById("r" + id);
         row.parentNode.removeChild(row);
+        document.getElementById("button-modal-cancel").click();
     }
 }
 
@@ -115,16 +134,13 @@ async function addUser(form){
     let formDataObject = Object.fromEntries(formData);
     let rolesList = formData.getAll("roles").map(name => new Object({authority: ("ROLE_" + name)}));
     formDataObject.roles = rolesList;
-    console.log(formDataObject);
     let json = JSON.stringify(formDataObject);
-    console.log(json);
 
     let response = await(fetch("/api/add", {method: "POST", headers: {"Content-Type": "application/json"},  body: json}));
-    console.log(response.status);
     if (response.status === 201) {
         let user = await response.json();
-        console.log(user);
         addUserInAdminTable(user, window.users.length, document.getElementById("admin-table-body"));
+        users.push(user);
         document.getElementById("users-tab").click();
     }
 }

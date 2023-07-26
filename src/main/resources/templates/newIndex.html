@@ -123,6 +123,7 @@
                     </div>
                     <div class="modal-body mx-5 px-5 text-center">
                         <form id="modal-form">
+                            <fieldset id="modal-fieldset">
                             <label class="form-label mb-0" for="input-id">ID</label>
                             <input class="form-control mb-2" disabled id="input-id" name="id" type="number">
                             <label class="form-label mb-0" for="input-firstname">First Name</label>
@@ -141,12 +142,13 @@
                             <label class="form-check-label mb-0" for="checkbox-enabled">Enabled</label>
                             <input class="form-check-input" id="checkbox-locked" name="locked" type="checkbox">
                             <label class="form-check-label mb-0" for="checkbox-locked">Locked</label>
+                            </fieldset>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button class="btn btn-secondary" data-bs-dismiss="modal" id="button-modal-cancel" type="button">Cancel</button>
-                            <button class="btn" id="button-modal-OK" type="button"></button>
+                            <button form="modal-form" class="btn" id="button-modal-OK" type="submit">OK button</button>
                         </div>
                     </div>
                 </div>
